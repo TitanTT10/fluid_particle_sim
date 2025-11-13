@@ -1,3 +1,5 @@
+mod events;
+mod resources;
 mod camera;
 mod simulation;
 
