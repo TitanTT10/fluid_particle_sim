@@ -9,8 +9,9 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
+            resources::ResourcesPlugin,
             camera::CameraPlugin,
-            simulation::SimPlugin,
+//            simulation::SimPlugin,
         ))
         .run();
 }

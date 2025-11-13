@@ -7,7 +7,14 @@ pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_camera);
+        app.add_systems(Startup, (
+            setup_camera,
+            instructions,
+            setup,
+        ));
+        app.add_systems(Update, (
+            input::orbit,
+        ));
     }
 }
 
@@ -25,4 +32,55 @@ fn setup_camera(
     ));
 
     cmd.spawn(DirectionalLight::default());
+}
+
+
+// tmp
+fn instructions(mut commands: Commands) {
+    commands.spawn((
+        Name::new("Instructions"),
+        Text::new(
+            "Mouse up or down: pitch\n\
+            Mouse left or right: yaw\n\
+            Mouse buttons: roll",
+        ),
+        Node {
+            position_type: PositionType::Absolute,
+            top: px(12),
+            left: px(12),
+            ..default()
+        },
+    ));
+}
+
+// tmp
+// Set up a simple 3D scene
+fn setup(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    commands.spawn((
+        Name::new("Plane"),
+        Mesh3d(meshes.add(Plane3d::default().mesh().size(5.0, 5.0))),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: Color::srgb(0.3, 0.5, 0.3),
+            // Turning off culling keeps the plane visible when viewed from beneath.
+            cull_mode: None,
+            ..default()
+        })),
+    ));
+
+    commands.spawn((
+        Name::new("Cube"),
+        Mesh3d(meshes.add(Cuboid::default())),
+        MeshMaterial3d(materials.add(Color::srgb(0.8, 0.7, 0.6))),
+        Transform::from_xyz(1.5, 0.51, 1.5),
+    ));
+
+    commands.spawn((
+        Name::new("Light"),
+        PointLight::default(),
+        Transform::from_xyz(3.0, 8.0, 5.0),
+    ));
 }
