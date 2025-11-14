@@ -11,7 +11,7 @@ fn main() {
             DefaultPlugins,
             resources::ResourcesPlugin,
             camera::CameraPlugin,
-//            simulation::SimPlugin,
+            simulation::SimPlugin,
         ))
         .run();
 }

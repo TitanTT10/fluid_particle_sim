@@ -13,11 +13,11 @@ impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, (
             setup_camera,
-            instructions,
             setup,
         ));
         app.add_systems(Update, (
             input::orbit,
+            input::zoom.after(input::orbit),
             grab::focus_events,
             grab::toggle_grab.run_if(input_just_released(KeyCode::Escape)),
         ));
@@ -39,25 +39,6 @@ fn setup_camera(
     ));
 
     cmd.spawn(DirectionalLight::default());
-}
-
-
-// tmp
-fn instructions(mut commands: Commands) {
-    commands.spawn((
-        Name::new("Instructions"),
-        Text::new(
-            "Mouse up or down: pitch\n\
-            Mouse left or right: yaw\n\
-            Mouse buttons: roll",
-        ),
-        Node {
-            position_type: PositionType::Absolute,
-            top: px(12),
-            left: px(12),
-            ..default()
-        },
-    ));
 }
 
 // tmp
