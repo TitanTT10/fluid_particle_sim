@@ -1,6 +1,10 @@
 mod input;
+mod grab;
 
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    input::common_conditions::input_just_released,
+};
 
 
 pub struct CameraPlugin;
@@ -14,7 +18,10 @@ impl Plugin for CameraPlugin {
         ));
         app.add_systems(Update, (
             input::orbit,
+            grab::focus_events,
+            grab::toggle_grab.run_if(input_just_released(KeyCode::Escape)),
         ));
+        app.add_observer(grab::apply_grab);
     }
 }
 
