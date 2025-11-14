@@ -1,6 +1,9 @@
 use bevy::{
     prelude::*,
-    input::mouse::AccumulatedMouseMotion,
+    input::mouse::{
+        AccumulatedMouseMotion,
+        AccumulatedMouseScroll,
+    },
     window::PrimaryWindow,
 };
 
@@ -10,9 +13,10 @@ pub fn orbit(
     mut camera: Single<&mut Transform, With<Camera>>,
     camera_settings: Res<CameraSettings>,
     mouse_motion: Res<AccumulatedMouseMotion>,
+    mouse_buttons: Res<ButtonInput<MouseButton>>,
     window: Single<&Window, With<PrimaryWindow>>,
 ) {
-    if !window.focused {
+    if !window.focused || !mouse_buttons.pressed(MouseButton::Left) {
         return;
     }
 
@@ -28,11 +32,11 @@ pub fn orbit(
     let (yaw, pitch, roll) = camera.rotation.to_euler(EulerRot::YXZ);
 
     // Establish the new yaw and pitch, preventing the pitch value from exceeding our limits.
-    let pitch = (pitch + delta_pitch).clamp(
+    let pitch = (pitch - delta_pitch).clamp(
         camera_settings.pitch_range.start,
         camera_settings.pitch_range.end,
     );
-    let yaw = yaw + delta_yaw;
+    let yaw = yaw - delta_yaw;
     camera.rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, roll);
 
     // Adjust the translation to maintain the correct orientation toward the orbit target.
@@ -41,3 +45,19 @@ pub fn orbit(
     camera.translation = target - *camera.forward() * camera_settings.orbit_distance;
 }
 
+pub fn zoom(
+    mut camera: Single<&mut Transform, With<Camera>>,
+    mut camera_settings: ResMut<CameraSettings>,
+    mouse_scroll: Res<AccumulatedMouseScroll>,
+    window: Single<&Window, With<PrimaryWindow>>,
+) {
+    if !window.focused {
+        return;
+    }
+
+    let scroll_delta = mouse_scroll.delta.y;
+    camera_settings.orbit_distance *= 1. - (scroll_delta * 0.1);
+
+    let target = Vec3::ZERO;
+    camera.translation = target - *camera.forward() * camera_settings.orbit_distance;
+}
