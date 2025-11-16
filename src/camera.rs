@@ -13,7 +13,6 @@ impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, (
             setup_camera,
-            setup,
         ));
         app.add_systems(Update, (
             input::orbit,
