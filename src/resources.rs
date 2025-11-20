@@ -12,6 +12,14 @@ impl Plugin for ResourcesPlugin {
 }
 
 
+#[derive(States, Default, Debug, Clone, Eq, PartialEq, Hash)]
+pub enum GameState {
+    #[default]
+    Paused,
+    Running,
+}
+
+
 #[derive(Debug, Resource)]
 pub struct CameraSettings {
     pub orbit_distance: f32,
