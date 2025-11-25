@@ -1,8 +1,7 @@
 mod events;
-mod resources;
 mod general;
+mod resources;
 mod camera;
-mod ui;
 mod simulation;
 
 use bevy::prelude::*;
